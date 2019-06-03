@@ -3,8 +3,9 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
 const DEBUG = process.env.NODE_ENV === 'development';
 
@@ -45,35 +46,25 @@ const commonConfig = {
             },
             // 处理 css|scss 文件
             {
-                test: /\.(css|scss)$/,
-                use: DEBUG ? 
-                    [
-                        'style-loader', 
-                        {loader: 'css-loader', options: {importLoaders: 2}},
-                        {loader: 'postcss-loader', options: {
-                            plugins: [
-                                require('autoprefixer')({
-                                    'browsers': ['> 1%', 'last 2 versions']
-                                })
-                            ]
-                        }}, 
-                        'sass-loader'
-                    ] : 
-                    ExtractTextWebpackPlugin.extract({
-                        fallback: 'style-loader',
-                        use: [
-                            {loader: 'css-loader', options: {importLoaders: 2}},
-                            {loader: 'postcss-loader', options: {
-                                plugins: [
-                                    require('autoprefixer')({
-                                        'browsers': ['> 1%', 'last 2 versions']
-                                    })
-                                ]
-                            }},
-                            'sass-loader'
-                        ]
-                    })
-            },
+                test: /\.styl$/,
+                use: [
+                  DEBUG ? 'style-loader' : MiniCssExtractPlugin.loader,
+                  'css-loader',
+                  'postcss-loader',
+                  'stylus-loader',
+                ],
+                include: [path.resolve(__dirname, 'src')],
+                exclude: /node_modules/,
+              },
+              {
+                test: /\.(le|c)ss$/,
+                use: [
+                  DEBUG ? 'style-loader' : MiniCssExtractPlugin.loader,
+                  'css-loader',
+                  'postcss-loader',
+                  'less-loader',
+                ],
+              },
             // 处理 html
             {
                 test: /\.html$/,
@@ -164,7 +155,7 @@ const productionConfig = {
             hashDigest: 'hex',
             hashDigestLength: 20
         }),
-        new ExtractTextWebpackPlugin({
+        new MiniCssExtractPlugin({
             filename: 'css/[name].css?[md5:contenthash:hex:5]',
             allChunks: true
         })
