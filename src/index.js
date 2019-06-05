@@ -1,11 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-    HashRouter as Router,
-    Route,
-    Switch,
-    Redirect,
-  } from 'react-router-dom'
+  HashRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom'
+import './common/common.styl'
 
 import Home from './page-home'
 import './index.styl'
