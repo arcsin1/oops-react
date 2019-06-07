@@ -1,12 +1,3 @@
-import {asyncComponent} from '../common/util'
-// import './hello.styl'
+import asyncComponent from '../common/util'
 
-export default asyncComponent(async () => {
-  try {
-    const module = await import('./home')
-    return module.default
-  } catch (error) {
-    console.log(error)
-  }
-  return null
-})
+export default asyncComponent(() => import('./home'))
